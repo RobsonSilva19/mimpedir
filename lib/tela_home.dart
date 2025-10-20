@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mimpedir1/banco/restaurante_DAO.dart';
 import 'package:mimpedir1/tela_cad_restaurante.dart';
 import 'package:mimpedir1/tela_editar_restaurante.dart';
-/*import '.../restaurante.dart';*/
+import 'package:mimpedir1/restaurante.dart';
 
 class TelaHome extends StatefulWidget {
   TelaHome({super.key});
@@ -65,8 +65,29 @@ class TelaHomeState extends State<TelaHome>{
                   children: [
                     IconButton(onPressed: (){
                       Navigator.push(context, MaterialPageRoute(builder: (context) => TelaEditarRestaurante()));
-                    }, icon: Icon(Icons.edit, color: Colors.blue,)),
-                    IconButton(onPressed: (){}, icon: Icon(Icons.delete, color: Colors.red,)),
+                    }, icon: Icon(Icons.edit, color: Colors.blue)),
+                    IconButton(onPressed: () async{
+                      TelaEditarRestaurante.restaurante = await RestauranteDAO.listar(r.codigo);
+                    }, icon: Icon(Icons.delete, color: Colors.red,)),
+                    IconButton(onPressed: (){
+                      showDialog(context: context,
+                          builder: (BuildContext) => AlertDialog(
+                            title: Text('ATENCãO!'),
+                            content: Text('Confirmar exclusâo?'),
+                            actions: [
+                              TextButton(onPressed: (){
+                                Navigator.pop(context);
+                              }, child: Text('cancelar')),
+                              TextButton(onPressed: (){
+                                RestauranteDAO.excluir(r);
+                                setState(() {
+                                  carregarRestaurante();
+                                });
+                                Navigator.pop(context);
+                              }, child: Text('sim'))
+                            ],
+                          ));
+                    }, icon: Text(''))
                   ],
                 ),
               ),

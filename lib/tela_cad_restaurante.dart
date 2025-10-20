@@ -104,7 +104,7 @@ class TelaCadRestauranteState extends State<TelaCadRestaurante>{
               children: [
                 Icon(Icons.save),
                 Text("Cadastrar")
-              ],,
+              ],
             ))
           ],
        ),
