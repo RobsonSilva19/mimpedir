@@ -6,7 +6,7 @@ class TipoDAO{
   static Future<Tipo>listar(int? id) async {
     final db = await DatabaseHelper.getDataBase();
     final resultado = await db.query('tb_tipo',
-    where: 'dc_tipo = ?',
+    where: 'cd_tipo = ?',
     whereArgs: [id]
     );
 

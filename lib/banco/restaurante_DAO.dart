@@ -1,7 +1,6 @@
 import 'package:mimpedir1/banco/database_helper.dart';
 import 'package:mimpedir1/banco/usuario_dao.dart';
 import 'package:mimpedir1/tipo.dart';
-import 'package:mimpedir1/usuario.dart';
 import 'package:mimpedir1/restaurante.dart';
 import 'package:mimpedir1/banco/tipo_DAO.dart';
 
@@ -27,12 +26,13 @@ class RestauranteDAO{
     where: 'cd_restaurante = ?',
     whereArgs: [cd]
     );
+
     return Restaurante(
       codigo: resultado.first['cd_restaurante'] as int,
       nome: resultado.first['nm_restaurante'] as String,
       latitude: resultado.first['latitude_restaurante'] as String,
       longitude: resultado.first['longitude_restauramte'] as String,
-      tipoCulinaria: TipoDAO.listar(resultado.first['cd_tipo'] as int) as Tipo
+      tipoCulinaria: await TipoDAO.listar(resultado.first['cd_tipo'] as int) as Tipo
     );
   }
 

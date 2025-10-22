@@ -35,6 +35,7 @@ class TelaEditarRestauranteState extends State<TelaEditarRestaurante>{
     nomeController.text = TelaEditarRestaurante.restaurante.nome!;
     latitudeController.text = TelaEditarRestaurante.restaurante.latitude!;
     longitudeController.text = TelaEditarRestaurante.restaurante.longitude!;
+    tipoCulinaria = TelaEditarRestaurante.restaurante.tipoCulinaria?.codigo!;
     culinariaSelecionada = TelaEditarRestaurante.restaurante.tipoCulinaria?.descricao!;
   }
 
@@ -57,28 +58,25 @@ class TelaEditarRestauranteState extends State<TelaEditarRestaurante>{
             SizedBox(height: 40),
             Text('CODIGO'),
             TextFormField(
-              decoration: InputDecoration(
-                  hintText: 'CODIGO'),
+              decoration: InputDecoration(hintText: 'CODIGO'),
               validator: (String? value) {},
               controller: cdController,
               enabled: false,
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                  hintText: 'Nome do Restaurante'),
-              validator: (String? value) {},
             ),
             SizedBox(height: 10),
             Text("Tipo de comida: "),
             DropdownButtonFormField<String>(
                 value: culinariaSelecionada,
-                items: tipoCulinaria.map((tipo){
+                items: tiposCulinaria.map((tipo){
                   return DropdownMenuItem<String>(
                     value: tipo.descricao,
                     child: Text("${tipo.descricao}"),
                   );
-                }),
-                onChanged: (value) {}),
+                }).toList(),
+                onChanged: (String? value) {
+
+                }
+            ),
               TextFormField(
                 decoration: const InputDecoration(hintText: 'Latitude'),
                 validator: (String? value) {},
@@ -89,7 +87,7 @@ class TelaEditarRestauranteState extends State<TelaEditarRestaurante>{
               ),
               SizedBox(height: 50),
               ElevatedButton(onPressed: () {
-                RestauranteDAO.atualizar();
+
                 setState(() {
 
                 });
@@ -100,10 +98,12 @@ class TelaEditarRestauranteState extends State<TelaEditarRestaurante>{
                   Icon(Icons.save),
                   Text("Salvar")
                 ],
-              ))
+              )
+              )
           ],
         ),
       ),
     );
   }
+
 }

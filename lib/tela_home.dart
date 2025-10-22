@@ -4,6 +4,8 @@ import 'package:mimpedir1/tela_cad_restaurante.dart';
 import 'package:mimpedir1/tela_editar_restaurante.dart';
 import 'package:mimpedir1/restaurante.dart';
 
+import 'banco/usuario_dao.dart';
+
 class TelaHome extends StatefulWidget {
   TelaHome({super.key});
 
@@ -12,19 +14,21 @@ class TelaHome extends StatefulWidget {
 }
 
 class TelaHomeState extends State<TelaHome>{
-  List<Restaurante> restaurante = [];
+  List<Restaurante> restaurantes = [];
 
   @override
   void initStata(){
     super.initState();
-    carregarRestaurante();
+    carregarRestaurantes();
   }
 
 
-  Future<void> carregarRestaurante() async{
+  Future<void> carregarRestaurantes() async{
+
     final lista = await RestauranteDAO.listarTodos();
+
     setState(() {
-      restaurante = lista;
+      restaurantes = lista;
     });
   }
 
@@ -32,18 +36,13 @@ class TelaHomeState extends State<TelaHome>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Lista de Restaurantes "),
+      appBar: AppBar(title: const Text('Lista de Restaurantes '),
         actions: [
           TextButton(
               onPressed: () async{
-               final t = Navigator.push(context,
-                   MaterialPageRoute(builder: (context) => TelaCadRestaurante()));
-
+               final t = Navigator.push(context,MaterialPageRoute(builder: (context) => TelaCadRestaurante()));
                if(t == false || t == null){
-
-                 setState(() {
-                   carregarRestaurante();
-                 });
+                   carregarRestaurantes();
                }
 
           }, child: Icon(Icons.add)
@@ -52,9 +51,9 @@ class TelaHomeState extends State<TelaHome>{
       ),
       body: Padding(padding: const EdgeInsets.all(20),
         child: ListView.builder(
-          itemCount: restaurante.length,
+          itemCount: restaurantes.length,
           itemBuilder: (context, index){
-            final r = restaurante[index];
+            final r = restaurantes[index];
             return Card(
               margin: EdgeInsets.symmetric(vertical: 8),
               child: ListTile(
@@ -63,31 +62,37 @@ class TelaHomeState extends State<TelaHome>{
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(onPressed: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => TelaEditarRestaurante()));
-                    }, icon: Icon(Icons.edit, color: Colors.blue)),
-                    IconButton(onPressed: () async{
-                      TelaEditarRestaurante.restaurante = await RestauranteDAO.listar(r.codigo);
-                    }, icon: Icon(Icons.delete, color: Colors.red,)),
-                    IconButton(onPressed: (){
-                      showDialog(context: context,
-                          builder: (BuildContext) => AlertDialog(
-                            title: Text('ATENCãO!'),
-                            content: Text('Confirmar exclusâo?'),
-                            actions: [
-                              TextButton(onPressed: (){
-                                Navigator.pop(context);
-                              }, child: Text('cancelar')),
-                              TextButton(onPressed: (){
-                                RestauranteDAO.excluir(r);
-                                setState(() {
-                                  carregarRestaurante();
-                                });
-                                Navigator.pop(context);
-                              }, child: Text('sim'))
-                            ],
-                          ));
-                    }, icon: Text(''))
+                    IconButton(
+                        icon: Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () async{
+                          TelaEditarRestaurante.restaurante = await RestauranteDAO.listar(r.codigo);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => TelaEditarRestaurante()));
+                        },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: (){
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                title: Text('ATENCãO!'),
+                                content: Text('Confirmar exclusâo?'),
+                                actions: [
+                                  TextButton(onPressed: (){
+                                    Navigator.pop(context);
+                                  }, child: Text('cancelar')),
+                                  TextButton(onPressed: (){
+                                    RestauranteDAO.excluir(r);
+                                    setState(() {
+                                      carregarRestaurantes();
+                                    });
+                                    Navigator.pop(context);
+                                  }, child: Text('sim'))
+                                ],
+                              )
+                          );
+                        },
+                    )
                   ],
                 ),
               ),
@@ -96,8 +101,13 @@ class TelaHomeState extends State<TelaHome>{
         ),
       ),
       floatingActionButton: FloatingActionButton(
-          onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => TelaCadRestaurante()));
+          onPressed: () async{
+           final t = Navigator.push(context, MaterialPageRoute(builder: (context) => TelaCadRestaurante()));
+            if(t == false || t == null){
+              setState(() {
+                carregarRestaurantes();
+              });
+            }
           },
         child: Icon(Icons.add),
       ),
